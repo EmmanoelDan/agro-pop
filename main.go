@@ -1,19 +1,18 @@
 package main
 
 import (
-	"net/http"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/EmmanoelDan/agro-pop/config"
+	"github.com/EmmanoelDan/agro-pop/routers"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	r := gin.Default()
+	_, err := config.ConnectDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	r.GET("/ping", func (c *gin.Context)  {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.Run(":8080")
+	routers.Init()
 }

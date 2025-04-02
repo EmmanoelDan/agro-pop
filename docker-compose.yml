@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  app:
+    image: golang:latest
+    container_name: agro_pop
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_KEY: ${JWT_SECRET}
+      DB_SSLMODE: disable
+    command: go run main.go
+
+  db:
+    image: postgres:13
+    container_name: agro_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "${DB_PORT}:5432"
+
+volumes:
+  pgdata:
